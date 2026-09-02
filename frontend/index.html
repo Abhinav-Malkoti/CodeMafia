@@ -8,18 +8,31 @@
 
 <body>
 
+
     <div id="app">
+
         <header>
-            <h1>CODEMAFIA</h1>
-            <span>Debug. Collaborate. Find the Impostor.</span>
+            <div>
+                <h1>CODEMAFIA</h1>
+                <span>Debug. Collaborate. Find the Impostor.</span>
+            </div>
+
+            <button id="run-button">▶ RUN</button>
         </header>
 
         <main>
             <div id="editor"></div>
+
+            <section id="output-panel">
+                <div id="output-header">OUTPUT</div>
+                <pre id="output"></pre>
+            </section>
         </main>
+
     </div>
 
     <script type="module" src="/src/main.js"></script>
 
 </body>
+
 </html>
