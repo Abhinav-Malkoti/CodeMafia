@@ -4,8 +4,8 @@ let pyodide = null;
 let pyodideReady = false;
 
 async function initialize() {
-    console.log("PYODIDE WORKER STARTED");
-    console.log("LOADING PYODIDE...");
+    //console.log("PYODIDE WORKER STARTED");
+    //console.log("LOADING PYODIDE...");
 
     pyodide = await loadPyodide({
         indexURL: `https://cdn.jsdelivr.net/pyodide/v${pyodideVersion}/full/`
@@ -13,7 +13,7 @@ async function initialize() {
 
     pyodideReady = true;
 
-    console.log("PYODIDE LOADED");
+    //console.log("PYODIDE LOADED");
 
     self.postMessage({
         type: "ready"
@@ -23,32 +23,42 @@ async function initialize() {
 initialize();
 
 self.onmessage = async (event) => {
-    console.log("WORKER RECEIVED:", event.data);
+    //console.log("WORKER RECEIVED:", event.data);
 
     const { type, code } = event.data;
 
     if (type === "run") {
-        if (!pyodideReady) {
-            self.postMessage({
-                type: "error",
-                error: "Python is still loading."
-            });
+    if (!pyodideReady) {
+        self.postMessage({
+            type: "error",
+            error: "Python is still loading."
+        });
 
-            return;
-        }
-
-        try {
-            const result = await pyodide.runPythonAsync(code);
-
-            self.postMessage({
-                type: "result",
-                result: String(result)
-            });
-        } catch (error) {
-            self.postMessage({
-                type: "error",
-                error: error.toString()
-            });
-        }
+        return;
     }
+
+    try {
+        let output = "";
+
+        pyodide.setStdout({
+            batched: (text) => {
+                output += text + "\n";
+            }
+        });
+
+        const result = await pyodide.runPythonAsync(code);
+
+        self.postMessage({
+            type: "result",
+            output: output,
+            result: String(result)
+        });
+
+    } catch (error) {
+        self.postMessage({
+            type: "error",
+            error: error.toString()
+        });
+    }
+}
 };

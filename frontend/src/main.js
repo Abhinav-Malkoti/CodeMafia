@@ -39,7 +39,8 @@ let pyodideReady = false;
 
 // Listen for messages from the worker
 pyodideWorker.onmessage = (event) => {
-    console.log("MESSAGE FROM WORKER:", event.data);
+    
+  //console.log("MESSAGE FROM WORKER:", event.data);
 
     const message = event.data;
 
@@ -49,8 +50,14 @@ pyodideWorker.onmessage = (event) => {
     }
 
     if (message.type === "result") {
-        output.textContent = message.result;
+    let finalOutput = message.output || "";
+
+    if (message.result !== "undefined") {
+        finalOutput += message.result;
     }
+
+    output.textContent = finalOutput;
+}
 
     if (message.type === "error") {
         output.textContent = message.error;
@@ -63,7 +70,7 @@ pyodideWorker.onmessage = (event) => {
 const runButton = document.getElementById("run-button");
 
 runButton.addEventListener("click", () => {
-    console.log("RUN BUTTON CLICKED");
+    //console.log("RUN BUTTON CLICKED");
 
     if (!pyodideReady) {
         output.textContent = "Python is still loading...";
@@ -72,7 +79,7 @@ runButton.addEventListener("click", () => {
 
     const code = editor.getValue();
 
-    console.log("CODE BEING SENT:", code);
+    //console.log("CODE BEING SENT:", code);
 
     output.textContent = "Running...";
 
