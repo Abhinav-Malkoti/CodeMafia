@@ -12,7 +12,11 @@
     "vite": "^8.2.2"
   },
   "dependencies": {
-    "monaco-editor": "^0.56.0",
-    "pyodide": "^314.0.6"
+    "monaco-editor": "^0.50.0",
+    "pyodide": "^314.0.6",
+    "y-monaco": "^0.1.6",
+    "y-protocols": "^1.0.6",
+    "y-websocket": "^3.1.0",
+    "yjs": "^13.6.32"
   }
 }
