@@ -1595,7 +1595,7 @@ The next step is to build the **actual CodeMafia game engine** on top of this st
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-Installation of dependencies 
+##Installation of dependencies 
 
 Yes. For the **current CodeMafia implementation**, you need a relatively small dependency set.
 
