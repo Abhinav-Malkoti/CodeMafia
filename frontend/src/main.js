@@ -18,6 +18,15 @@ const provider = new WebsocketProvider(
     doc
 );
 
+
+// ===============================
+// SHARED GAME STATE
+// ===============================
+
+const gameState = doc.getMap("gameState");
+const sharedCode = doc.getText("code");
+
+
 // ===============================
 // PLAYER IDENTITY
 // ===============================
@@ -31,6 +40,10 @@ provider.awareness.setLocalStateField("user", {
 
 console.log("PLAYER:", playerName);
 
+
+// ===============================
+// PLAYER LIST
+// ===============================
 
 provider.awareness.on("change", () => {
 
@@ -46,9 +59,8 @@ provider.awareness.on("change", () => {
 
     console.log("PLAYERS ONLINE:", players);
 
-
-    // Update player list in UI
-    const playerList = document.getElementById("player-list");
+    const playerList =
+        document.getElementById("player-list");
 
     if (!playerList) {
         return;
@@ -58,7 +70,8 @@ provider.awareness.on("change", () => {
 
     players.forEach((player) => {
 
-        const playerElement = document.createElement("div");
+        const playerElement =
+            document.createElement("div");
 
         playerElement.textContent = `🟢 ${player}`;
 
@@ -69,27 +82,105 @@ provider.awareness.on("change", () => {
 });
 
 
-const sharedCode = doc.getText("code");
+// ===============================
+// YJS DEBUG
+// ===============================
 
 console.log("CLIENT ID:", doc.clientID);
 console.log("ROOM:", provider.roomname);
-console.log("INITIAL SHARED CODE:", sharedCode.toString());
+console.log(
+    "INITIAL SHARED CODE:",
+    sharedCode.toString()
+);
 
 sharedCode.observe((event) => {
+
     console.log(
         "YJS UPDATE:",
         sharedCode.toString(),
         "ORIGIN:",
         event.transaction.origin
     );
+
 });
 
-console.log("ROOM: codemafia-room");
-console.log("INITIAL YJS TEXT:", sharedCode.toString());
+console.log(
+    "INITIAL YJS TEXT:",
+    sharedCode.toString()
+);
 
 sharedCode.observe(() => {
-    console.log("YJS TEXT CHANGED:", sharedCode.toString());
+
+    console.log(
+        "YJS TEXT CHANGED:",
+        sharedCode.toString()
+    );
+
 });
+
+if (!gameState.has("status")) {
+    gameState.set("status", "waiting");
+}
+
+if (!gameState.has("host")) {
+    gameState.set("host", playerName);
+}
+
+
+// ===============================
+// GAME STATE DEBUG (OBSERVER)
+// ===============================
+
+gameState.observe(() => {
+
+    const status = gameState.get("status");
+    const round = gameState.get("round");
+
+    console.log(
+        "GAME STATE:",
+        Object.fromEntries(gameState.entries())
+    );
+
+    const gameStatus =
+        document.getElementById("game-status");
+
+    const roundTitle =
+        document.getElementById("round-title");
+
+    const roundInfo =
+        document.getElementById("round-info");
+
+
+    if (status === "waiting") {
+
+        gameStatus.textContent =
+            "Waiting for host to start the game.";
+
+        roundTitle.textContent =
+            "Waiting for game...";
+
+        roundInfo.textContent = "";
+
+    }
+
+
+    if (status === "playing") {
+
+        gameStatus.textContent =
+            "Game in progress";
+
+        roundTitle.textContent =
+            `ROUND ${round}`;
+
+        roundInfo.textContent =
+            "Debug the code and find the impostor.";
+
+    }
+
+});
+
+
+
 
 // ===============================
 // MONACO WEB WORKER
@@ -139,9 +230,29 @@ provider.on("status", (event) => {
     console.log("Yjs server:", event.status);
 });
 
-//sync handler
+// ===============================
+// sync handler
+// ===============================
+
 provider.on("sync", (isSynced) => {
+
     console.log("Yjs synced:", isSynced);
+
+    if (!isSynced) {
+        return;
+    }
+
+
+    console.log(
+        "GAME STATUS:",
+        gameState.get("status")
+    );
+
+    console.log(
+        "GAME HOST:",
+        gameState.get("host")
+    );
+
 });
 
 // ===============================
@@ -217,6 +328,23 @@ pyodideWorker.onmessage = (event) => {
 // ===============================
 
 const runButton = document.getElementById("run-button");
+
+const startButton = document.getElementById("start-button");
+
+startButton.addEventListener("click", () => {
+
+    const currentHost = gameState.get("host");
+
+    if (currentHost !== playerName) {
+        console.log("Only the host can start the game.");
+        return;
+    }
+
+    gameState.set("status", "playing");
+    gameState.set("round", 1);
+
+    console.log("GAME STARTED");
+});
 
 runButton.disabled = true;
 runButton.textContent = "Loading Python...";
