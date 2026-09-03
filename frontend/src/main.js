@@ -1,8 +1,9 @@
 import * as monaco from "monaco-editor";
+import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import * as Y from "yjs";
 import { MonacoBinding } from "y-monaco";
 import { WebsocketProvider } from "y-websocket";
-import "./style.css";
+import "./style.css";;
 
 
 // ===============================
@@ -16,6 +17,57 @@ const provider = new WebsocketProvider(
     "codemafia-room",
     doc
 );
+
+// ===============================
+// PLAYER IDENTITY
+// ===============================
+
+const playerName =
+    prompt("Enter your player name:") || "Player";
+
+provider.awareness.setLocalStateField("user", {
+    name: playerName
+});
+
+console.log("PLAYER:", playerName);
+
+
+provider.awareness.on("change", () => {
+
+    const players = [];
+
+    provider.awareness.getStates().forEach((state) => {
+
+        if (state.user) {
+            players.push(state.user.name);
+        }
+
+    });
+
+    console.log("PLAYERS ONLINE:", players);
+
+
+    // Update player list in UI
+    const playerList = document.getElementById("player-list");
+
+    if (!playerList) {
+        return;
+    }
+
+    playerList.innerHTML = "";
+
+    players.forEach((player) => {
+
+        const playerElement = document.createElement("div");
+
+        playerElement.textContent = `🟢 ${player}`;
+
+        playerList.appendChild(playerElement);
+
+    });
+
+});
+
 
 const sharedCode = doc.getText("code");
 
@@ -39,7 +91,15 @@ sharedCode.observe(() => {
     console.log("YJS TEXT CHANGED:", sharedCode.toString());
 });
 
+// ===============================
+// MONACO WEB WORKER
+// ===============================
 
+self.MonacoEnvironment = {
+    getWorker() {
+        return new EditorWorker();
+    }
+};
 
 
 // ===============================
@@ -118,12 +178,15 @@ pyodideWorker.onmessage = (event) => {
 
     if (message.type === "ready") {
 
-        pyodideReady = true;
+    pyodideReady = true;
 
-        output.textContent = "Python ready.";
+    output.textContent = "Python ready.";
 
-        return;
-    }
+    runButton.disabled = false;
+    runButton.textContent = "▶ RUN";
+
+    return;
+}
 
 
     if (message.type === "result") {
@@ -154,6 +217,9 @@ pyodideWorker.onmessage = (event) => {
 // ===============================
 
 const runButton = document.getElementById("run-button");
+
+runButton.disabled = true;
+runButton.textContent = "Loading Python...";
 
 runButton.addEventListener("click", () => {
 
