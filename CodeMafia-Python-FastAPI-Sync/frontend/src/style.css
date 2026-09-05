@@ -1,0 +1,97 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background: #0f172a;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    height: 60px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #111827;
+    border-bottom: 1px solid #334155;
+    box-sizing: border-box;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+header span {
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+main {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#editor {
+    width: 100%;
+    flex: 1;
+    min-height: 450px; /* Increased from 320px for a better default visual workspace */
+    height: 100%;      /* Tells Monaco to fill 100% of the flex space calculated by 'main' */
+}
+
+#output-panel {
+    flex: 0 0 170px;
+    border-top: 1px solid #334155;
+    background: #020617;
+}
+
+#output-header {
+    padding: 8px 16px;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+#output {
+    margin: 0;
+    padding: 0 16px 12px;
+    white-space: pre-wrap;
+    overflow: auto;
+}
+
+#players {
+    padding: 10px 20px;
+    background: #111827;
+    color: white;
+}
+
+#players h3 {
+    margin: 0 0 8px;
+}
+
+#player-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#player-list div {
+    padding: 5px 10px;
+    background: #1f2937;
+    border-radius: 6px;
+}

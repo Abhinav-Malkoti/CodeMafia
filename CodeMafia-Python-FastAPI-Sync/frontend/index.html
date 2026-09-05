@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeMafia</title>
+</head>
+
+<body>
+
+    <div id="app">
+
+        <header>
+            <div>
+                <h1>CODEMAFIA</h1>
+                <span>Debug. Collaborate. Find the Impostor.</span>
+            </div>
+            <button id="start-btn">START GAME</button>
+            <button id="run-btn">RUN CODE</button>
+        </header>
+
+        <div id="game-status">
+            Waiting for host...
+        </div>
+
+
+        <!-- PLAYERS -->
+        <section id="players">
+            <h3>Players Online</h3>
+            <div id="player-list"></div>
+        </section>
+
+        <section id="round-panel">
+            <h2 id="round-title">Waiting for game...</h2>
+            <p id="round-info"></p>
+        </section>
+
+
+        <main>
+            <div id="editor"></div>
+
+            <section id="output-panel">
+                <div id="output-header">OUTPUT</div>
+                <pre id="output"></pre>
+            </section>
+        </main>
+
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+
+</body>
+</html>
